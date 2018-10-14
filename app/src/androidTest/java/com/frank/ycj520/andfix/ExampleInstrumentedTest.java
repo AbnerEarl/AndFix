@@ -1,4 +1,4 @@
-package com.frank.ycj520.testcplusplus;
+package com.frank.ycj520.andfix;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

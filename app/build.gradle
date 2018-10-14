@@ -10,7 +10,7 @@ android {
         exclude 'META-INF/rxjava.properties'
     }
     defaultConfig {
-        applicationId "com.frank.ycj520.testcplusplus"
+        //applicationId "com.frank.ycj520.testcplusplus"
         minSdkVersion 15
         targetSdkVersion 27
         versionCode 1

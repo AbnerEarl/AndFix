@@ -89,7 +89,7 @@
 	}
 3、重新编译一次项目，在类似下面的目录中找到需要修复的class文件：F:\AndroidStudioProject\AndFix\andfix\build\intermediates\javac\debug\compileDebugJavaWithJavac\classes\……。使用命令或者编译工具，把需要修复的class文件转换为dex文件。可以把该文件放置到服务器或者其他地方。
 
-4、其实，这一步应该是在前面三步之前完成。只有这一步提前做了，也就是上一个版本能够检测到服务端发布的dex修复文件，在app中才能自动修复。这一步主要内容为：在Android中的Activity中，书写对应的dex文件下载方法，如检测服务端是否发布了dex文件，如果检测到就下载到手机的指定目录文件夹。在需要修复的逻辑代码块中，使用下面的代码进行修复：
+4、其实，这一步和第3步应该是在前面发布的版本中完成。只有这一步提前做了，也就是上一个版本能够检测到服务端发布的dex修复文件，在app中才能自动修复。这一步主要内容为：在Android中的Activity中，书写对应的dex文件下载方法，如检测服务端是否发布了dex文件，如果检测到就下载到手机的指定目录文件夹。在需要修复的逻辑代码块中，使用下面的代码进行修复：
 
 	DxManager dxManager=new DxManager(this);
 	//方法的参数为文件流，如下方式调用：

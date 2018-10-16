@@ -7,9 +7,15 @@
 
 # 最新版本
 
-版本号：[![](https://www.jitpack.io/v/YouAreOnlyOne/AndroidHttp.svg)](https://www.jitpack.io/#YouAreOnlyOne/AndroidHttp)
+版本号：[![](https://www.jitpack.io/v/YouAreOnlyOne/AndFix.svg)](https://www.jitpack.io/#YouAreOnlyOne/AndFix)
 
 使用自行替换下面的版本号，以获得最新版本。
+
+# 使用体验
+
+1、首先下载app，并安装，下载地址：https://github.com/YouAreOnlyOne/AndFix/blob/master/source/AndFix.apk 。安装之后，可以点击“计算”按钮，或者点击“修复”之后再点击“计算”，发现程序都会直接崩溃掉。
+
+2、下载修复文件，并放到手机存储的根目录下面，下载地址：https://github.com/YouAreOnlyOne/AndFix/blob/master/source/out.dex 。此时，重新进入app，先点击“修复”，之后，点击“计算”，发现程序一切正常。实现了热修复。
 
 # 使用方法
 
@@ -33,14 +39,14 @@
 
     dependencies {
             ...
-            implementation 'com.github.YouAreOnlyOne:AndroidHttp:版本号'
+            implementation 'com.github.YouAreOnlyOne:AndFix:版本号'
             ...
      }
     
     
 方法二：
     
- 1.第一步，下载依赖的包：https://github.com/YouAreOnlyOne/AndroidHttp/blob/master/aar/networkrequest-release.aar 。并放到项目的 libs 目录下面。
+ 1.第一步，下载依赖的包：https://github.com/YouAreOnlyOne/AndFix/blob/master/source/andfix-release.aar 。并放到项目的 libs 目录下面。
     
  2.第二步,在app的build.gradle下添加如下依赖，注意，两个依赖是平级关系：
     
@@ -52,7 +58,7 @@
     
     dependencies {
             ...
-            compile(name:'networkrequest-release', ext:'aar')
+            compile(name:'andfix-release', ext:'aar')
             ...
     }
  
@@ -60,172 +66,38 @@
 	
 # 使用示例：
 
-由于每个框架集成和封装的方法有很对，这里只是随意挑选一个做演示，具体方法和目录见本文后面。使用总体策略：框架名称 . 方法名（如：OkhttpByPost . postFile() ）。
+1、在项目开发中，某一个类写了如下代码：
 
- 1.Okhttp
- 
- (1)输入这一行代码：
-  
-            OkhttpByPost.postFile("http://www.baidu.com","/mnt/TestFolder/test.doc", new Callback()); 
- 
-然后按 Alt+Enter 键，选择 implement methods，自动生成如下代码：
+	public class Caculator {
+    		public int caculate(){
+    	  		int i=0,j=100;
+      			return j/i;
+  		}
+	}
 
-           OkhttpByPost.postFile("http://www.baidu.com","/mnt/TestFolder/test.doc", new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                 ...
-                 //请求失败的逻辑处理
-                 ...
-            }
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                  ...
-                  //请求成功的逻辑处理
-                  ...
-            }
-        });
- 
- (2)输入这一行代码：
-  
-            OkhttpByPost.postFileAddHeader("http://www.baidu.com", headerName, headerValue, tokenName, tokenValue, "/mnt/TestFolder/test.doc", new Callback()); 
- 
-然后按 Alt+Enter 键，选择 implement methods，自动生成如下代码：
+此时，项目已经上线，版本已经发布，但是又不能立即发布下一个版本。
 
-           OkhttpByPost.postFileAddHeader("http://www.baidu.com", headerName, headerValue, tokenName, tokenValue, "/mnt/TestFolder/test.doc", new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                 ...
-                 //请求失败的逻辑处理
-                 ...
-            }
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                  ...
-                  //请求成功的逻辑处理
-                  ...
-            }
-        });
- 
- 
- 
- 2.Volley
- 
-   输入这一行代码：
-  
-            VolleyByImage.loadImageByImageRequest(this,"http://baidu.com", imageView,new Response.ErrorListener());
- 
-   然后按 Alt+Enter 键，选择 implement methods，自动生成如下代码：
-            
-            VolleyByImage.loadImageByImageRequest(this, "http://baidu.com", imageView, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                         ...
-                         //图片加载错误的逻辑处理
-                         ...
-                    }
-                });
- 
- 3.RxJava
- 
-  输入这一行代码：
-  
-            RxJavaByPost.PostString(this, "http://www.baidu.com/", "fanyi/china", parameters, new RxStringCallback());
- 
-   然后按 Alt+Enter 键，选择 implement methods，自动生成如下代码：
-   
-            RxJavaByPost.PostString(this, "http://www.baidu.com/", "fanyi/china", parameters, new RxStringCallback() {
-            @Override
-            public void onNext(Object tag, String response) {
-               ...
-               //网络请求成功返回的结果逻辑处理
-               ...
-            }
+2、在项目中新建一个包，重写该类中的方法，如下代码：
 
-            @Override
-            public void onError(Object tag, Throwable e) {
-               ...
-               //网络请求错误返回的结果逻辑处理
-              ...
-            }
+	public class Caculator {
 
-            @Override
-            public void onCancel(Object tag, Throwable e) {
-                ...
-                //网络请求取消返回的结果逻辑处理
-                ...
-            }
-        });
- 
- 
-# 项目用到的权限
+   	 	@Replace(clazz = "上面的发生错误的类所在的包名.Caculator",method = "caculate(方法名)")
+   	 	public int caculate(){
+       			int i=10,j=100;
+       			return j/i;
+    		}
+	}
+3、重新编译一次项目，在类似下面的目录中找到需要修复的class文件：F:\AndroidStudioProject\AndFix\andfix\build\intermediates\javac\debug\compileDebugJavaWithJavac\classes\……。使用命令或者编译工具，把需要修复的class文件转换为dex文件。可以把该文件放置到服务器或者其他地方。
 
-  在manifest文件中添加访问的权限：
- 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-   
-# 项目用到的三方依赖
+4、其实，这一步应该是在前面发布的版本中完成，也就是已经发布的版本已经实现了这一步，也就是应该是最先完成的。只有这一步提前做了，也就是上一个版本能够检测到服务端发布的dex修复文件，在app中才能自动修复。这一步主要内容为：在Android中的Activity中，书写对应的dex文件下载方法，如检测服务端是否发布了dex文件，如果检测到就下载到手机的指定目录文件夹。在需要修复的逻辑代码块中，使用下面的代码进行修复：
 
- 在app的build.gradle下添加如下依赖：
-    
-    android {
-      packagingOptions {
-           exclude 'META-INF/LICENSE'
-           exclude 'META-INF/NOTICE'
-           exclude 'META-INF/rxjava.properties'
-         }
-      ...
-      ...
-     }
-    
-     dependencies {
-            ...
-            implementation 'com.squareup.okhttp3:okhttp:3.11.0'
-            testImplementation 'com.squareup.okhttp3:mockwebserver:3.11.0'
-            implementation 'com.squareup.retrofit2:retrofit:2.4.0'
-            implementation 'com.mcxiaoke.volley:library:1.0.19'
-            implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
-            implementation 'io.reactivex.rxjava2:rxjava:2.1.0'
-            implementation 'com.tamic.novate:novate:1.5.2.3'
-            ...
-     }
-     
-     
-# 多样化工具类
- 
- ## Ftp文件上传、文件下载、文件删除、进度监听
- 
- Ftp文件上传、文件下载、文件删除、进度监听等功能是需要一行代码进行调用即可。
- 
- ## 常用图片压缩及图片保存方法
- 
- 包括质量压缩方法、比列压缩方法、分辨率压缩方法、图片存储等常用的方法，只需要一行代码就可以实现。
- 
- ## 常用的加密算法
- 
- 包括MD5加密算法、DES加密算法、MISC算法等等，已经封装好，只需要用类名点方法名（）即可调用实现。
- 
- ## Strings工具类常用方法
- 
- 包括字符编码的转换、时间格式的转换、非空的判断、输入流的转换等等，只需要调用即可使用。
- 
- ## 日志输出管理
- 
- 在任何一个文件中，不管是字符串日志还是数据列表日志，只要用L.e()或者L.g()或者L.a()等方法即可快速的打印日志。
- 
- ## APP退出管理
- 
- 包括App中Activity的加入和移除，状态监控及管理，彻底的退出应用程序的方法等等，一行代码调用方法即可完成操作。
- 
-# 使用指南
- 
- 更新中……
- 
-# 相关介绍
+	//开始修复，就下面这两行代码
+	DxManager dxManager=new DxManager(this);
+	//方法的参数为文件流，如下方式调用：
+        dxManager.loadDex(new File(Environment.getExternalStorageDirectory(),"out.dex"));
+	
+	
+不会写文件下载的，可以参考一下下面的文章：
 
 OkHttp 、Retrofit 、Volley 、RxJava、Novate在Android中Web网络请求一行代码解决。
 
@@ -235,9 +107,30 @@ https://blog.csdn.net/u014374009/article/details/82933127
 
 https://blog.csdn.net/u014374009/article/details/82944107
 
-一行代码解决Android中图片加载、图片压缩、图片保存、获取缩略图、图片转换等相关问题。
+ 
+ 
+# 项目用到的权限
 
-https://blog.csdn.net/u014374009/article/details/82948722
+  在manifest文件中添加访问的权限：
+ 
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+   
+
+ 
+# 使用指南
+ 
+ 更新中……
+ 
+# 相关介绍
+
+一行代码解决AndFix热修复和热跟更新问题，集成了阿里的开源库，修复程序的缺陷bug漏洞和功能页面等.
+
+https://blog.csdn.net/u014374009/article/details/83052178
+
+
 
 
 # 其它信息
